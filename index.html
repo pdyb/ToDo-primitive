@@ -1,0 +1,136 @@
+<html>
+
+<head>
+    <style type="text/css">
+        .task_done { text-decoration:line-through; color:#888888;}
+        .task_undone {}
+
+        text {text-decoration:underline;}
+    </style>
+</head>
+
+
+
+<body>
+<!-- 
+<h1>My First Heading</h1> -->
+
+<p>My first paragraph.</p>
+
+<div> 
+<input id="desc" type="text" name="todo_desc"> 
+<button id="add" onclick="clickAddTask()">提交</button>
+
+<div id="task-list">
+</div>
+
+
+<div id="task-count">
+</div>
+
+<div id="task-count">
+    <text onclick="filter(0)">all</text>
+    <text onclick="filter(1)">done</text>
+    <text onclick="filter(2)">undone</text>
+</div>
+
+<div>
+    <text onclick="markAllDone()">mark all done</text>
+</div>
+
+</div>
+
+
+
+    <script type="text/javascript">
+        function Task(name, done) {
+            this.name = name;
+            this.done = done;
+        }
+
+        var tasks = new Array();
+        var filter_all = 0;
+        var filter_done = 1;
+        var filter_undone = 2;
+        var filterType = 0;
+
+        //添加任务
+        function addTask() {
+            var desc = document.getElementById("desc").value;
+            tasks[tasks.length] = new Task(desc, false);
+
+            document.getElementById("desc").value = ""
+        }
+
+        //输出任务列表
+        function printTask() {
+            var list = "<ul>" 
+            for(var i = 0, l = tasks.length; i < l; i++) {
+                //console.log(tasks[i]);
+                var task = tasks[i];
+
+                if ((filterType == filter_undone && task.done) || (filterType == filter_done && !task.done)) {
+                    continue;
+                }
+
+                var cstyle = task.done ? "task_done" : "task_undone"
+
+                list = list + "<li onclick=\"clickTask(" + i + ")\"  class=\"" + cstyle + "\">" + task.name + "   </li><text onclick=\"delTask(" + i + ")\">X</text>"
+            }
+            list = list + "</ul>"
+            document.getElementById("task-list").innerHTML = list;
+        }
+
+        //输出任务个数
+        function printTaskCount() {
+            document.getElementById("task-count").innerHTML = ("count is " + (tasks.length))
+        }
+
+        //刷ui
+        function updateUI() {
+            printTask();
+            printTaskCount();
+        }
+
+        // 删除任务
+        function delTask(position) {
+            tasks.splice(position, 1);
+
+            updateUI();
+        }
+
+        //点击任务列表项
+        function clickTask(position) {
+            //console.log("clickTask" + position)
+            tasks[position].done = !tasks[position].done;
+
+            updateUI();
+        }
+
+        //
+        function filter(type) {
+            filterType = type;
+
+            updateUI();
+        }
+
+        function markAllDone() {
+
+        }
+
+        //添加添加按钮
+        function clickAddTask() {
+            //添加任务
+            addTask();
+
+            //输出列表
+            updateUI();
+        }
+
+        // document.getElementById("add").onclick=function(){
+        // }
+
+    </script>
+
+</body>
+</html>
