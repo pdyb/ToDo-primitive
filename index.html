@@ -12,12 +12,18 @@
 
 
 <body>
-<!-- 
-<h1>My First Heading</h1> -->
 
-<p>My first paragraph.</p>
 
-<div> 
+<div>
+    <text onclick="filter(0)">all</text>
+    <text onclick="filter(1)">done</text>
+    <text onclick="filter(2)">undone</text>
+</div>
+
+<div>
+    <text onclick="markAllDone()">mark all done</text>
+</div>
+
 <input id="desc" type="text" name="todo_desc"> 
 <button id="add" onclick="clickAddTask()">提交</button>
 
@@ -28,15 +34,6 @@
 <div id="task-count">
 </div>
 
-<div id="task-count">
-    <text onclick="filter(0)">all</text>
-    <text onclick="filter(1)">done</text>
-    <text onclick="filter(2)">undone</text>
-</div>
-
-<div>
-    <text onclick="markAllDone()">mark all done</text>
-</div>
 
 </div>
 
@@ -53,6 +50,7 @@
         var filter_done = 1;
         var filter_undone = 2;
         var filterType = 0;
+        
 
         //添加任务
         function addTask() {
@@ -90,6 +88,8 @@
         function updateUI() {
             printTask();
             printTaskCount();
+
+            saveData();
         }
 
         // 删除任务
@@ -115,7 +115,12 @@
         }
 
         function markAllDone() {
+            for(var i = 0, l = tasks.length; i < l; i++) {
+                //console.log(tasks[i]);
+                tasks[i].done = true;
+            }
 
+            updateUI();
         }
 
         //添加添加按钮
@@ -127,8 +132,32 @@
             updateUI();
         }
 
-        // document.getElementById("add").onclick=function(){
-        // }
+        //保存数据到cookie
+        function saveData() {
+            var savestring = JSON.stringify(tasks);
+            //console.log(savestring)
+            localStorage.setItem('session', savestring);
+        }
+
+        //从cookie读取数据，恢复到ui
+        function restoreData() {
+            //console.log("file is ==>> " + localStorage.getItem('session'))
+            var tempName;
+            var restoredSession = JSON.parse(localStorage.getItem('session'), function(k,v) {
+                //console.log(k + "  " + v)
+                if (k == 'name') {
+                    tempName = v;
+                }
+                if (k == 'done') {
+                    tasks[tasks.length] = new Task(tempName, v);
+                    //console.log("read from file ->> " + tasks[tasks.length - 1])
+                }
+            });
+            //console.log(tasks)
+            updateUI();
+        }
+
+        restoreData();
 
     </script>
 
